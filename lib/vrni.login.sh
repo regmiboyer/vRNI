@@ -2,7 +2,7 @@
 
 read -r -d '' BODY <<-CONFIG
 {
-	"username": "demouser@cmbu.local",
+	"username": "demouser@xyz.local",
 	"password": "demoVMware1!",
 	"domain": {
 		"domain_type": "LOCAL"
