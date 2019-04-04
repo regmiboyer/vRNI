@@ -4,8 +4,8 @@
 	"endpoints": [
 		{
 			"type": "vrni",
-			"hostname": "10.10.10.10",
-			"username": "demouser@cmbu.local",
+			"hostname": "hostname",
+			"username": "demouser@xyz.local",
 			"password": "demoVMware1!",
 			"online": "true"
 		}
