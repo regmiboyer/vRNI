@@ -1,0 +1,68 @@
+# In this script, you need to replace the placeholders <vRNI_IP>, <vRNI_username>, <vRNI_password>, and <file_path> with the actual values. Also, make sure that the CSV file has the correct format and structure, with the first column indicating whether the row data represents an application or a group, and the second column containing the name of the application or group. The rest of the columns should contain the names or IP addresses of the virtual machines that belong to the application or group.#
+
+# Once you have updated the script with the correct values, you can run it using a Python interpreter. The script will read the CSV file, process the data, and create the applications and groups VMs in vRealize Network Insight using the vRealize Network Insight API.
+
+# The CSV file should be in format below. +--------------+------------------+---------------------------+--------------------------------------+
+| Type         | Name             | Description               | Virtual Machines                     |
++--------------+------------------+---------------------------+--------------------------------------+
+| application  | Web App          | This is a web application | web_server_1,web_server_2,web_server_3|
+| group        | Database Group   | This is a database group  | db_server_1,db_server_2,db_server_3  |
++--------------+------------------+---------------------------+--------------------------------------+
+# In this format, the data is arranged in a table with the headers on the top row, and the application and group data in the subsequent rows. The "Type" column indicates whether the row represents an application or a group. The "Name" column contains the name of the application or group. The "Description" column contains a description of the application or group. The "Virtual Machines" column contains the names or IP addresses of the virtual machines that belong to the application or group.
+
+# The second and third rows represent an application and a group, respectively. The "Web App" application has a description of "This is a web application" and three virtual machines named "web_server_1", "web_server_2", and "web_server_3". The "Database Group" group has a description of "This is a database group" and three virtual machines named "db_server_1", "db_server_2", and "db_server_3".
+
+# You can add more rows to the table to import additional applications and groups VMs. Just make sure that the data is in the correct format and structure, with the first column indicating whether the row data represents an application or a group, and the second column containing the name of the application or group.
+
+
+
+import requests
+import json
+
+# set the vRealize Network Insight API endpoint
+endpoint = "https://<vRNI_IP>/api/ni"
+
+# set the vRealize Network Insight API credentials
+username = "<vRNI_username>"
+password = "<vRNI_password>"
+
+# set the file path of the CSV file that contains the list of applications and groups VMs to import
+csv_file = "<file_path>/applications_and_groups_vms.csv"
+
+# read the CSV file
+with open(csv_file) as file:
+    csv_data = file.readlines()
+
+# process the CSV data
+for row in csv_data:
+    # split the row data into columns
+    columns = row.split(",")
+
+    # create the application/group VMs data in JSON format
+    if columns[0] == "application":
+        data = {
+            "name": columns[1],
+            "description": columns[2],
+            "tags": [],
+            "app_group": False,
+            "virtual_machines": columns[3:]
+        }
+    elif columns[0] == "group":
+        data = {
+            "name": columns[1],
+            "description": columns[2],
+            "tags": [],
+            "app_group": True,
+            "virtual_machines": columns[3:]
+        }
+
+    # send the data to the vRealize Network Insight API to create the application/group VMs
+    url = endpoint + "/api/infra/applications"
+    headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+    response = requests.post(url, auth=(username, password), headers=headers, data=json.dumps(data))
+
+    # check the response status
+    if response.status_code != 200:
+        print("Error creating application/group VMs: " + response.text)
+    else:
+        print("Application/group VMs created successfully.")
